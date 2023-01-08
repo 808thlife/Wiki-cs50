@@ -25,7 +25,6 @@ def new_page(request):
         f = open('entries/' + form.cleaned_data['title'] + '.md', 'x')
         f.write(form.cleaned_data['content'])
         f.close()
-        messages.add_message(request, messages.INFO, 'file save success')
         return redirect('index')
     return render(request, './encyclopedia/newpage.html', {
         'form': form
@@ -38,8 +37,14 @@ def entry(request,title):
     content = util.get_entry(title)
     if content == None:
         return HttpResponse('Fuck you')
-    content = markdowner.convert(util.get_entry(title))
-    return render(request,'encyclopedia/entry.html',{
-        'title':title,
-        'content':content
-    })
+    else:
+        content = markdowner.convert(util.get_entry(title))
+        return render(request,'encyclopedia/entry.html',{
+            'title':title,
+            'content':content
+        })
+
+def edit(request,title):
+    util.save_entry(title,content)
+
+    return render(request, f'encyclopedia/edit/{title}')
