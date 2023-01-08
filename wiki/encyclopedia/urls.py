@@ -6,7 +6,7 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path('newpage/', views.new_page, name = 'newpage'),
-    path('entries/', views.view_entry, name = 'entry')
+    path('wiki/<str:title>', views.entry, name = 'entries')
 ]
 
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

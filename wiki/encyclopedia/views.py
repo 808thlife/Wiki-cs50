@@ -1,12 +1,10 @@
 from django.shortcuts import render, redirect
 from django import forms
+from django.http import HttpResponse
 from . import util
 from mdutils.mdutils import MdUtils
 from mdutils import Html
-import markdown
-from django.http import HttpResponse
-from django.contrib import messages
-
+from markdown2 import Markdown
 
 class NewPage(forms.Form):
     title = forms.CharField(label="Title", widget=forms.TextInput(
@@ -35,6 +33,13 @@ def new_page(request):
     )
 
     return render(request, './encyclopedia/newpage.html', {'form': form})
-
-def view_entry(request,entry):
-    return render(util.get_entr(entry))
+def entry(request,title):
+    markdowner = Markdown()
+    content = util.get_entry(title)
+    if content == None:
+        return HttpResponse('Fuck you')
+    content = markdowner.convert(util.get_entry(title))
+    return render(request,'encyclopedia/entry.html',{
+        'title':title,
+        'content':content
+    })
