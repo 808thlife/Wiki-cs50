@@ -7,7 +7,7 @@ urlpatterns = [
     path("", views.index, name="index"),
     path('newpage/', views.new_page, name = 'newpage'),
     path('wiki/<str:title>', views.entry, name = 'entries'),
-    path('edit/<str:title>',views.edit, name = 'edit'),
+    path('wiki/<str:title>/edit',views.edit, name = 'edit'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
