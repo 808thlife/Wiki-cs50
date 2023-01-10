@@ -2,9 +2,8 @@ from django.shortcuts import render, redirect
 from django import forms
 from django.http import HttpResponse
 from . import util
-from mdutils.mdutils import MdUtils
-from mdutils import Html
 from markdown2 import Markdown
+import os
 
 class NewPage(forms.Form):
     title = forms.CharField(label="Title", widget=forms.TextInput(
@@ -45,6 +44,14 @@ def entry(request,title):
         })
 
 def edit(request,title):
-    util.save_entry(title,content)
-
-    return render(request, f'encyclopedia/edit/{title}')
+   
+    form = NewPage(request.POST)
+    if form.is_valid():
+        f = open('entries/' + form.cleaned_data['title'] + '.md', 'x')
+        f.write(form.cleaned_data['content'])
+        f.close()
+        return redirect('index')
+    return render(request, './encyclopedia/edit.html', {
+        'form': form
+    }
+    )
