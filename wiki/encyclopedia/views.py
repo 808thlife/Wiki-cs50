@@ -6,10 +6,16 @@ from markdown2 import Markdown
 import os
 
 class NewPage(forms.Form):
-    title = forms.CharField(label="Title", widget=forms.TextInput(
+    title = forms.CharField(label="Title",widget=forms.TextInput(
         attrs={'placeholder': 'Page Title'}))
     content = forms.CharField(label="Content", widget=forms.Textarea(
         attrs={'placeholder': 'Enter new page content here in Markdown format'}))
+
+class EditPage(forms.Form):
+    content = forms.CharField(label="Content",required=True, widget=forms.Textarea(
+        attrs={'placeholder': 'Edit page\'s content here in Markdown format',
+                'required':True,
+                }))
 
 
 def index(request):
@@ -45,13 +51,14 @@ def entry(request,title):
 
 def edit(request,title):
    
-    form = NewPage(request.POST)
+    form = EditPage(request.POST)
     if form.is_valid():
         f = open('entries/' + form.cleaned_data['title'] + '.md', 'x')
         f.write(form.cleaned_data['content'])
         f.close()
         return redirect('index')
     return render(request, './encyclopedia/edit.html', {
+        'title':title,
         'form': form
     }
     )
