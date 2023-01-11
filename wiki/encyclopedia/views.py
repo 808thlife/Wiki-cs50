@@ -54,9 +54,9 @@ def edit(request,title):
     form = EditPage(request.POST)
     initial = EditPage(initial={'content': content, 'title':title})
     if form.is_valid():
-        content = form.cleaned_data['content']
+        content = form.cleaned_data['content']  
         util.save_entry(title, content)
-        return redirect(f'wiki/{title}')
+        return redirect('index')
     else:
         content = util.get_entry(title)
         form = EditPage(initial= {'title':title, 'content':content})
