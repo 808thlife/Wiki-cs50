@@ -56,7 +56,7 @@ def edit(request,title):
     if form.is_valid():
         content = form.cleaned_data['content']
         util.save_entry(title, content)
-        return redirect(f'wiki/{title}')
+        return redirect(f'entry.html')
     else:
         content = util.get_entry(title)
         form = EditPage(initial= {'title':title, 'content':content})
