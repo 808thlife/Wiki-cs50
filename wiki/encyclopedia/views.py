@@ -1,9 +1,15 @@
 from django.shortcuts import render, redirect
-from django import forms
+from django import forms 
 from django.http import HttpResponse, HttpResponseRedirect
-from . import util
+from django.urls import reverse
+from django.views.generic import ListView
+
+import urllib.request
 from markdown2 import Markdown
 import os
+
+from . import models
+from . import util
 
 class NewPage(forms.Form):
     title = forms.CharField(label="Title",widget=forms.TextInput(
@@ -54,9 +60,10 @@ def edit(request,title):
     form = EditPage(request.POST)
     initial = EditPage(initial={'content': content, 'title':title})
     if form.is_valid():
-        content = form.cleaned_data['content']
+        content = form.cleaned_data['content']  
         util.save_entry(title, content)
-        return redirect(f'entry.html')
+        return redirect('index')
+
     else:
         content = util.get_entry(title)
         form = EditPage(initial= {'title':title, 'content':content})
@@ -68,5 +75,13 @@ def edit(request,title):
     }
     )
 
-
+def search(request):   
+    result = []
+    if request.method == 'GET':
+        query = request.GET.get('q')    
+        if query == '':
+            query = 'NONE'
+        object_list = models.Entry().objects.filter(modelfield__icontains=query)
+    
+        return render(request, 'encyclopedia/search.html', {'results':object_list})
 
