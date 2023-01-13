@@ -8,6 +8,7 @@ urlpatterns = [
     path('newpage/', views.new_page, name = 'newpage'),
     path('wiki/<str:title>', views.entry, name = 'entries'),
     path('wiki/<str:title>/edit',views.edit, name = 'edit'),
+    path('search', views.search, name = 'search'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

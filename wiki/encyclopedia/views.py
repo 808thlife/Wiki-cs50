@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect
-from django import forms
+from django import forms 
 from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
+from django.views.generic import ListView
+
+import urllib.request
 from . import util
 from markdown2 import Markdown
 import os
@@ -54,9 +58,10 @@ def edit(request,title):
     form = EditPage(request.POST)
     initial = EditPage(initial={'content': content, 'title':title})
     if form.is_valid():
-        content = form.cleaned_data['content']
+        content = form.cleaned_data['content']  
         util.save_entry(title, content)
-        return redirect(f'entry.html')
+        return redirect('index')
+
     else:
         content = util.get_entry(title)
         form = EditPage(initial= {'title':title, 'content':content})
@@ -68,5 +73,13 @@ def edit(request,title):
     }
     )
 
-
+def search(request):   
+    result = []
+    if request.method == 'GET':
+        query = request.GET.get('q')    
+        if query == '':
+            query = 'NONE'
+        for entry in util.list_entries():
+            result.append(entry)
+        return render(request, 'encyclopedia/search.html', {'results':result})
 
