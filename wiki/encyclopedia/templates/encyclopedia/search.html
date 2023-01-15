@@ -5,5 +5,10 @@ Search
 {% endblock %}
 
 {% block body %}
-{{results}}
+<h1>Searching Results:</h1>
+{% for result in results%}
+    <ul>
+        <li><a href = "/wiki/{{result}}" open>{{ result }}</a></li>
+    </ul>
+{% endfor %}
 {% endblock %}

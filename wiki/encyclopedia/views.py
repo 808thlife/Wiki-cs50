@@ -5,9 +5,11 @@ from django.urls import reverse
 from django.views.generic import ListView
 
 import urllib.request
-from . import util
 from markdown2 import Markdown
 import os
+
+from . import models
+from . import util
 
 class NewPage(forms.Form):
     title = forms.CharField(label="Title",widget=forms.TextInput(
@@ -74,12 +76,19 @@ def edit(request,title):
     )
 
 def search(request):   
-    result = []
+    counter = 0
+    result = set()
+    entries = util.list_entries()
     if request.method == 'GET':
         query = request.GET.get('q')    
-        if query == '':
-            query = 'NONE'
-        for entry in util.list_entries():
-            result.append(entry)
-        return render(request, 'encyclopedia/search.html', {'results':result})
-
+        if query == '': #If it's nothing
+            query = 'NONE'    
+        if query in entries:
+            return redirect(f'wiki/{query}')
+        else:
+            results = [entry for entry in entries if query.lower() in entry.lower()]
+            return render(request, "encyclopedia/index.html", {
+                "entries": results
+                })
+                   
+    return render(request, 'encyclopedia/search.html', {'results':result})
