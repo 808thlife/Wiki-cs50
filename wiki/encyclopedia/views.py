@@ -7,6 +7,7 @@ from django.views.generic import ListView
 import urllib.request
 from markdown2 import Markdown
 import os
+from random import randint
 
 from . import models
 from . import util
@@ -35,7 +36,7 @@ def new_page(request):
         f = open('entries/' + form.cleaned_data['title'] + '.md', 'x')
         f.write(form.cleaned_data['content'])
         f.close()
-        return redirect('index')
+        return redirect('encyclopedia:index')
     return render(request, './encyclopedia/newpage.html', {
         'form': form
     }
@@ -62,7 +63,7 @@ def edit(request,title):
     if form.is_valid():
         content = form.cleaned_data['content']  
         util.save_entry(title, content)
-        return redirect('index')
+        return redirect('encyclopedia:index')
 
     else:
         content = util.get_entry(title)
@@ -92,3 +93,9 @@ def search(request):
                 })
                    
     return render(request, 'encyclopedia/search.html', {'results':result})
+
+def random(request):
+    arr = util.list_entries()
+    index = randint(0, len(arr)-1)
+    rand = arr[index]
+    return HttpResponseRedirect(f'wiki/{rand}')
